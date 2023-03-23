@@ -6,7 +6,9 @@ import store from './store'
 import functions from '@/scripts/functions.js'
 Vue.use(functions)
 
+import defaultUI from '@/css/default.scss'
 import waatUI from '@/css/waat.scss'
+Vue.use(defaultUI)
 Vue.use(waatUI)
 
 Vue.config.productionTip = false

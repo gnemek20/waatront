@@ -2,7 +2,7 @@
   <div class="flex flex-column">
     <div class="logo">
       <h1>WAAT</h1>
-      <input type="button" value="시작하기">
+      <input class="button" type="button" value="시작하기">
     </div>
   </div>
 </template>
