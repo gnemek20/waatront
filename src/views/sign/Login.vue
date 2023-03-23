@@ -22,8 +22,19 @@ export default {
     }
   },
   methods: {
-    login() {
-      console.log(this.id, this.pwd)
+    async login() {
+      const { status, data } = await this.$post('/drive/login', {
+        id: this.id,
+        pwd: this.pwd
+      });
+
+      if (status === 200) {
+        this.$session.set('id', data);
+        this.$push('/workbench');
+      }
+      else {
+        alert('에러가 발생했습니다. 잠시 후에 다시 시도해주세요.');
+      }
     }
   }
 }

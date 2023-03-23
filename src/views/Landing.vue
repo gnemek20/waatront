@@ -1,7 +1,7 @@
 <template>
   <div class="logo">
     <h1>WAAT</h1>
-    <input class="button" type="button" value="시작하기" @click="$push('/login')">
+    <input type="button" value="시작하기" @click="$push('/login')">
   </div>
 </template>
 
