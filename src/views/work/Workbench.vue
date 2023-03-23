@@ -8,6 +8,9 @@
       <div class="workspace" v-for="(workspace, index) in workspaces" v-bind:key="index">
         <p>{{ workspace.name }}</p>
       </div>
+      <div class="add">
+        <img src="@/assets/icon/add.svg">
+      </div>
     </div>
   </div>
 </template>
@@ -31,8 +34,6 @@ export default {
           id: data[i].id
         });
       }
-
-      console.log(this.workspaces);
     }
   }
 }
@@ -55,18 +56,32 @@ export default {
   grid-template-columns: repeat(auto-fill, 350px);
   grid-auto-rows: 150px;
   gap: 20px;
+
+  .workspace {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid dimgray;
+    border-radius: 5px;
+  }
+
+  .workspace:hover {
+    cursor: pointer;
+    box-shadow: 0px 0px 10px 0px dimgray;
+  }
+
+  .add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .add:hover {
+    cursor: pointer;
+    border: 1px solid dimgray;
+    border-radius: 5px;
+    border-style: dashed;
+  }
 }
 
-.workspace {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid dimgray;
-  border-radius: 5px;
-}
-
-.workspace:hover {
-  cursor: pointer;
-  box-shadow: 0px 0px 10px 0px dimgray;
-}
 </style>
