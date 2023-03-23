@@ -1,17 +1,6 @@
 <template>
-  <div class="logo">
+  <div id="Landing">
     <h1>WAAT</h1>
-    <input type="button" value="시작하기" @click="$push('/login')">
+    <button @click="$push('/login')">시작하기</button>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.logo {
-  display: flex;
-  flex-direction: column;
-  width: 100vw;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
-}
-</style>

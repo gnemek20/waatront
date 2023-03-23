@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h1>login</h1>
+  <div id="Login">
+    <h1>시작하기</h1>
     <div class="id-form">
       <p>아이디</p>
       <input type="text" v-model="id">
