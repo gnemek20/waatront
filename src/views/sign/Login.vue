@@ -29,7 +29,7 @@ export default {
       });
 
       if (status === 200) {
-        this.$session.set('id', data);
+        this.$session.set('workbench', data);
         this.$push('/workbench');
       }
       else {
