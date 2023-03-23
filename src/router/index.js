@@ -5,6 +5,9 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/',
+    name: 'landing',
+    component: () => import('@/views/Landing.vue')
   }
 ]
 
