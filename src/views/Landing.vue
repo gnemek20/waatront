@@ -1,5 +1,19 @@
 <template>
-  <div>
-    <h1>안녕하세요!</h1>
+  <div class="flex flex-column">
+    <div class="logo">
+      <h1>WAAT</h1>
+      <input type="button" value="시작하기">
+    </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.logo {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+</style>
