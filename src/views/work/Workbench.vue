@@ -8,7 +8,14 @@
       <div class="workspace" v-for="(workspace, index) in workspaces" v-bind:key="index">
         <p>{{ workspace.name }}</p>
       </div>
-      <div class="add">
+      <div class="new" v-if="add">
+        <textarea v-model="name" @keypress.enter="addWorkspace" />
+        <div class="decision">
+          <button @click="changeAddStatus(false)">취소</button>
+          <button @click="addWorkspace()">확인</button>
+        </div>
+      </div>
+      <div class="add" @click="changeAddStatus(true)">
         <img src="@/assets/icon/add.svg">
       </div>
     </div>
@@ -19,7 +26,9 @@
 export default {
   data() {
     return {
-      workspaces: []
+      workspaces: [],
+      name: '',
+      add: false
     }
   },
   async created() {
@@ -33,6 +42,27 @@ export default {
           name: data[i].name,
           id: data[i].id
         });
+      }
+    }
+  },
+  methods: {
+    changeAddStatus(bool) {
+      this.add = bool;
+    },
+    async addWorkspace() {
+      const { status, data } = await this.$post('/drive/addWorkspace', {
+        workbench: this.$session.get('workbench'),
+        name: this.name
+      })
+
+      if (status === 200) {
+        this.workspaces.push({
+          name: this.name,
+          id: data
+        });
+
+        this.name = '';
+        this.changeAddStatus(false);
       }
     }
   }
@@ -81,6 +111,33 @@ export default {
     border: 1px solid dimgray;
     border-radius: 5px;
     border-style: dashed;
+  }
+
+  .new {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5px 10px;
+    border: 1px solid dimgray;
+    border-radius: 5px;
+
+    textarea {
+      width: 100%;
+      height: 100%;
+      outline: none;
+      border: none;
+      resize: none;
+    }
+
+    .decision {
+      display: flex;
+      justify-content: space-between;
+
+      button {
+        cursor: pointer;
+        width: 100px;
+      }
+    }
   }
 }
 
