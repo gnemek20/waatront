@@ -5,7 +5,7 @@
       <hr>
     </div>
     <div class="list">
-      <div class="workspace" v-for="(workspace, index) in workspaces" v-bind:key="index">
+      <div class="workspace" @click="clickWorkspace(workspace)" v-for="(workspace, index) in workspaces" v-bind:key="index">
         <p>{{ workspace.name }}</p>
       </div>
       <div class="new" v-if="add">
@@ -64,6 +64,10 @@ export default {
         this.name = '';
         this.changeAddStatus(false);
       }
+    },
+    clickWorkspace(workspace) {
+      this.$session.set('workspace', workspace.id);
+      this.$push('/workspace');
     }
   }
 }
@@ -82,7 +86,7 @@ export default {
 .list {
   display: grid;
   justify-content: center;
-  margin: 0px 50px;
+  margin: 0px 200px;
   grid-template-columns: repeat(auto-fill, 350px);
   grid-auto-rows: 150px;
   gap: 20px;
@@ -141,4 +145,9 @@ export default {
   }
 }
 
+@media (max-width: 1024px) {
+  .list {
+    margin: 0px;
+  }
+}
 </style>

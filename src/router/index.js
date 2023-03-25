@@ -18,6 +18,11 @@ const routes = [
     path: '/workbench',
     name: 'workbench',
     component: () => import('@/views/work/Workbench.vue')
+  },
+  {
+    path: '/workspace',
+    name: 'workspace',
+    component: () => import('@/views/work/Workspace.vue')
   }
 ]
 
