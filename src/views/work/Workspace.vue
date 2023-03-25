@@ -5,7 +5,9 @@
       <hr>
     </div>
     <div class="list">
-      <p>chick</p>
+      <div class="image" v-for="(image, index) in images" v-bind:key="index">
+        <canvas :ref="image.name" />
+      </div>
     </div>
   </div>
 </template>
@@ -17,19 +19,31 @@ export default {
       images: []
     }
   },
-  async created() {
+  async beforeCreate() {
     const { status, data } = await this.$post('/drive/images', {
       workspace: this.$session.get('workspace')
     });
 
     if (status === 200) {
-      for (let i = 0; i < data.length; i++) {
+      data.forEach((data) => {
         this.images.push({
-          id: data[i].id,
-          name: data[i].name
-        })
-      }
+          id: data.id,
+          name: data.name
+        });
+      });
     }
+  },
+  updated() {
+    this.images.forEach((image) => {
+      const canvas = this.$refs[`${image.name}`][0];
+      const context = canvas.getContext('2d');
+
+      let getImage = new Image();
+      getImage.src = `https://drive.google.com/uc?export=view&id=${image.id}`;
+      getImage.onload = () => {
+        context.drawImage(getImage, 0, 0, canvas.width, canvas.height);
+      }
+    });
   }
 }
 </script>
@@ -51,6 +65,20 @@ export default {
   grid-template-columns: repeat(auto-fill, 150px);
   grid-auto-rows: 150px;
   gap: 20px;
+
+  .image {
+    border: 1px solid dimgray;
+    border-radius: 5px;
+    background-image: linear-gradient(to right, #fbfcb9be, #ffcdf3aa, #65d3ffaa);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+  }
+
+  canvas {
+    width: 148px;
+    height: 148px;
+    border-radius: 5px;
+  }
 }
 
 @media (max-width: 1024px) {
