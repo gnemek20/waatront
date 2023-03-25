@@ -8,6 +8,12 @@
       <div class="image" v-for="(image, index) in images" v-bind:key="index">
         <canvas :ref="image.name" />
       </div>
+      <div class="add">
+        <label for="input">
+          <img src="@/assets/icon/add.svg">
+        </label>
+        <input id="input" type="file" @change="upload" accept="image/*" multiple>
+      </div>
     </div>
   </div>
 </template>
@@ -44,6 +50,33 @@ export default {
         context.drawImage(getImage, 0, 0, canvas.width, canvas.height);
       }
     });
+  },
+  methods: {
+    async upload() {
+      const input = document.getElementById('input');
+      const files = input.files;
+
+      if (files.length > 0) {
+        const formData = new FormData();
+        formData.append('workspace', this.$session.get('workspace'));
+        for (let file of files) {
+          formData.append('image', file);
+        }
+
+        const { status, data } = await this.$post('/drive/upload', formData);
+  
+        if (status === 200) {
+          data.forEach((data) => {
+            this.images.push({
+              id: data.id,
+              name: data.name
+            });
+          });
+
+          input.value = null;
+        }
+      }
+    }
   }
 }
 </script>
@@ -66,6 +99,12 @@ export default {
   grid-auto-rows: 150px;
   gap: 20px;
 
+  canvas {
+    width: 148px;
+    height: 148px;
+    border-radius: 5px;
+  }
+
   .image {
     border: 1px solid dimgray;
     border-radius: 5px;
@@ -74,10 +113,34 @@ export default {
     background-clip: content-box, border-box;
   }
 
-  canvas {
-    width: 148px;
-    height: 148px;
+  .image:hover {
+    cursor: pointer;
+    box-shadow: 0px 0px 5px 0px dimgray;
+  }
+
+  .add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    label {
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    input {
+      width: 0px;
+    }
+  }
+
+  .add:hover {
+    border: 1px solid dimgray;
     border-radius: 5px;
+    border-style: dashed;
   }
 }
 
