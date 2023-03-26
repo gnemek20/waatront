@@ -48,7 +48,7 @@
           <div class="type box">
             <h3>박스</h3>
           </div>
-          <div class="list">
+          <div class="list upper">
             <div class="item" v-for="(box, index) in boxes" v-bind:key="index">
               <div class="form" :ref="`boxForm${index}`" @click="clickBox(box, index)">
                 <div class="index">
@@ -66,8 +66,23 @@
           <div class="type attribute">
             <h3>속성</h3>
           </div>
-          <div class="list" v-if="side.attribute">
-            <p>속성 리스트</p>
+          <div class="list lower" v-if="side.attribute">
+            <div class="property">
+              <div class="category">
+                <p>이름</p>
+              </div>
+              <div class="detail">
+                <input type="text" v-model="selected.box.content">
+              </div>
+            </div>
+            <div class="property">
+              <div class="category">
+                <p>색깔</p>
+              </div>
+              <div class="detail">
+                <input type="text" v-model="selected.box.dummy">
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -175,6 +190,7 @@ export default {
       this.boxes.splice(index, 1);
 
       if (this.selected.box !== null) {
+        this.side.attribute = false;
         this.selected.boxRef.style.backgroundColor = '#f0f0f0';
         this.selected.boxRef = null;
         this.selected.box = null;
@@ -182,6 +198,7 @@ export default {
     },
     clickBox(box, index) {
       if (this.selected.boxRef === this.$refs[`boxForm${index}`][0]) {
+        this.side.attribute = false;
         this.selected.boxRef.style.backgroundColor = '#f0f0f0';
         this.selected.boxRef = null;
         this.selected.box = null;
@@ -196,6 +213,7 @@ export default {
         this.selected.box = box;
         this.selected.boxRef = this.$refs[`boxForm${index}`][0];
         this.selected.boxRef.style.backgroundColor = '#c9c9c9';
+        this.side.attribute = true;
       }
     },
 
@@ -273,6 +291,38 @@ export default {
     .area {
       height: 100vh;
       border-left: 1px solid dimgray;
+      .upper {
+        flex: 2.5;
+      }
+      .lower {
+        flex: 1;
+        .property {
+          display: flex;
+          height: 20px;
+          border-bottom: 1px solid dimgray;
+          font-size: 15px;
+          .category {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 50px;
+            border-right: 1px solid dimgray;
+          }
+          .detail {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 0px 3px;
+          }
+          input {
+            width: 100%;
+            background-color: inherit;
+            outline: none;
+            border: none;
+          }
+        }
+      }
     }
     .arrow {
       border-left: 1px solid dimgray;
