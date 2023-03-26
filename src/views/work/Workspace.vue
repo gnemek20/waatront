@@ -6,7 +6,7 @@
     </div>
     <div class="list">
       <div class="image" @click="clickImage(image)" v-for="(image, index) in images" v-bind:key="index">
-        <canvas :ref="image.name" width="150" height="150" />
+        <canvas :ref="image.name" width="148" height="148" />
       </div>
       <div class="add">
         <label for="input">
