@@ -17,7 +17,7 @@
           </div>
           <div class="list">
             <div class="item" v-for="(_class, index) in classes" v-bind:key="index">
-              <div class="form" :ref="`classForm${index}`" @click="clickClass(index)">
+              <div class="form" :ref="`classForm${index}`" @click="clickClass(_class, index)">
                 <div class="index">
                   <p>{{ index + 1 }}</p>
                 </div>
@@ -82,7 +82,9 @@ export default {
       },
       selected: {
         class: null,
-        object: null
+        object: null,
+        classRef: null,
+        objectRef: null
       },
       boxes: [],
       boxesLength: Number,
@@ -129,9 +131,10 @@ export default {
     removeClass(index) {
       this.classes.splice(index, 1);
     },
-    clickClass(index) {
-      if (this.selected.class === this.$refs[`classForm${index}`][0]) {
-        this.selected.class.style.backgroundColor = '#f0f0f0';
+    clickClass(_class, index) {
+      if (this.selected.classRef === this.$refs[`classForm${index}`][0]) {
+        this.selected.classRef.style.backgroundColor = '#f0f0f0';
+        this.selected.classRef = null;
         this.selected.class = null;
       }
       else {
@@ -141,8 +144,9 @@ export default {
           }
         })
 
-        this.selected.class = this.$refs[`classForm${index}`][0];
-        this.selected.class.style.backgroundColor = '#c9c9c9';
+        this.selected.class = _class
+        this.selected.classRef = this.$refs[`classForm${index}`][0];
+        this.selected.classRef.style.backgroundColor = '#c9c9c9';
       }
     },
 
