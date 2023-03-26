@@ -6,7 +6,7 @@
     </div>
     <div class="board">
       <canvas ref="imageCanvas" width="798" height="798"></canvas>
-      <canvas :ref="`boxCanvas${index}`" v-for="(box, index) in boxes" v-bind:key="index" width="798" height="798"></canvas>
+      <canvas :ref="`boxCanvas${index}`" v-for="(count, index) in boxCanvasCount" v-bind:key="index" width="798" height="798"></canvas>
       <canvas ref="dragCanvas" width="798" height="798"></canvas>
     </div>
     <div class="side">
@@ -45,11 +45,23 @@
           <img v-else src="@/assets/icon/leftArrow.svg" width="20">
         </div>
         <div class="area" v-if="side.right">
-          <div class="type object">
-            <h3>오브젝트</h3>
+          <div class="type box">
+            <h3>박스</h3>
           </div>
           <div class="list">
-            <p>오브젝트 리스트</p>
+            <div class="item" v-for="(box, index) in boxes" v-bind:key="index">
+              <div class="form" :ref="`boxForm${index}`" @click="clickBox(box, index)">
+                <div class="index">
+                  <p>{{ index + 1 }}</p>
+                </div>
+                <div class="content">
+                  <p>{{ box.content }}</p>
+                </div>
+              </div>
+              <div class="remove" @click="removeBox(index)">
+                <img src="@/assets/icon/trash.svg" width="15">
+              </div>
+            </div>
           </div>
           <div class="type attribute">
             <h3>속성</h3>
@@ -82,12 +94,16 @@ export default {
       },
       selected: {
         class: null,
-        object: null,
+        box: null,
         classRef: null,
-        objectRef: null
+        boxRef: null
+      },
+      mouse: {
+        x: null,
+        y: null
       },
       boxes: [],
-      boxesLength: Number,
+      boxCanvasCount: 0,
       classes: []
     }
   },
@@ -124,12 +140,17 @@ export default {
     },
     addClass() {
       this.classes.push({
-        index: this.classes.length,
         content: ''
-      })
+      });
     },
     removeClass(index) {
       this.classes.splice(index, 1);
+
+      if (this.selected.class !== null) {
+        this.selected.classRef.style.backgroundColor = '#f0f0f0';
+        this.selected.classRef = null;
+        this.selected.class = null;
+      }
     },
     clickClass(_class, index) {
       if (this.selected.classRef === this.$refs[`classForm${index}`][0]) {
@@ -139,45 +160,74 @@ export default {
       }
       else {
         Object.keys(this.$refs).forEach((key) => {
-          if (key.includes('classForm')) {
+          if (key.includes('classForm') && this.$refs[key].length !== 0) {
             this.$refs[key][0].style.backgroundColor = '#f0f0f0'
           }
-        })
+        });
 
         this.selected.class = _class
         this.selected.classRef = this.$refs[`classForm${index}`][0];
         this.selected.classRef.style.backgroundColor = '#c9c9c9';
       }
     },
+    removeBox(index) {
+      this.$refs[`boxCanvas${this.boxes[index].canvasIndex}`][0].remove();
+      this.boxes.splice(index, 1);
+
+      if (this.selected.box !== null) {
+        this.selected.boxRef.style.backgroundColor = '#f0f0f0';
+        this.selected.boxRef = null;
+        this.selected.box = null;
+      }
+    },
+    clickBox(box, index) {
+      if (this.selected.boxRef === this.$refs[`boxForm${index}`][0]) {
+        this.selected.boxRef.style.backgroundColor = '#f0f0f0';
+        this.selected.boxRef = null;
+        this.selected.box = null;
+      }
+      else {
+        Object.keys(this.$refs).forEach((key) => {
+          if (key.includes('boxForm') && this.$refs[key].length !== 0) {
+            this.$refs[key][0].style.backgroundColor = '#f0f0f0'
+          }
+        });
+
+        this.selected.box = box;
+        this.selected.boxRef = this.$refs[`boxForm${index}`][0];
+        this.selected.boxRef.style.backgroundColor = '#c9c9c9';
+      }
+    },
 
     /* Drag Event */
     mouseDown(event) {
-      this.boxesLength = this.boxes.length;
-      this.boxes.push({
-        x: event.offsetX,
-        y: event.offsetY,
-        dx: Number,
-        dy: Number
-      });
+      this.boxCanvasCount++;
+
+      this.mouse.x = event.offsetX;
+      this.mouse.y = event.offsetY;
 
       this.canvas.dragCanvas.addEventListener('mousemove', this.mouseMove);
     },
     mouseMove(event) {
-      this.dragBox(this.boxes[this.boxesLength].x, this.boxes[this.boxesLength].y, event.offsetX, event.offsetY);
+      this.dragBox(this.mouse.x, this.mouse.y, event.offsetX, event.offsetY);
     },
     mouseUp(event) {
       this.canvas.dragCanvas.removeEventListener('mousemove', this.mouseMove);
       this.context.dragContext.clearRect(0, 0, this.canvas.dragCanvas.width, this.canvas.dragCanvas.height);
 
-      this.boxes[this.boxesLength].dx = Math.max(this.boxes[this.boxesLength].x, event.offsetX);
-      this.boxes[this.boxesLength].dy = Math.max(this.boxes[this.boxesLength].y, event.offsetY);
-      this.boxes[this.boxesLength].x = Math.min(this.boxes[this.boxesLength].x, event.offsetX);
-      this.boxes[this.boxesLength].y = Math.min(this.boxes[this.boxesLength].y, event.offsetY);
+      this.boxes.push({
+        canvasIndex: this.boxCanvasCount - 1,
+        content: this.selected.class === null ? '' : this.selected.class.content,
+        x: Math.min(this.mouse.x, event.offsetX),
+        y: Math.min(this.mouse.y, event.offsetY),
+        dx: Math.max(this.mouse.x, event.offsetX),
+        dy: Math.max(this.mouse.y, event.offsetY)
+      });
 
-      const canvas = this.$refs[`boxCanvas${this.boxesLength}`][0];
+      const canvas = this.$refs[`boxCanvas${this.boxCanvasCount - 1}`][0];
       const context = canvas.getContext('2d');
 
-      this.drawBox(context, this.boxes[this.boxesLength].x, this.boxes[this.boxesLength].y, this.boxes[this.boxesLength].dx, this.boxes[this.boxesLength].dy);
+      this.drawBox(context, this.mouse.x, this.mouse.y, event.offsetX, event.offsetY);
     }
   }
 }
