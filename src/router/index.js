@@ -23,6 +23,11 @@ const routes = [
     path: '/workspace',
     name: 'workspace',
     component: () => import('@/views/work/Workspace.vue')
+  },
+  {
+    path: '/annotation',
+    name: 'annotation',
+    component: () => import('@/views/work/Annotation.vue')
   }
 ]
 
