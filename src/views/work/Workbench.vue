@@ -77,12 +77,10 @@ export default {
 .title {
   width: 800px;
   margin: 10px auto 20px;
-
   h1 {
     margin-bottom: 10px;
   }
 }
-
 .list {
   display: grid;
   justify-content: center;
@@ -90,7 +88,6 @@ export default {
   grid-template-columns: repeat(auto-fill, 350px);
   grid-auto-rows: 150px;
   gap: 20px;
-
   .workspace {
     display: flex;
     justify-content: center;
@@ -98,25 +95,21 @@ export default {
     border: 1px solid dimgray;
     border-radius: 5px;
   }
-
   .workspace:hover {
     cursor: pointer;
     box-shadow: 0px 0px 10px 0px dimgray;
   }
-
   .add {
     display: flex;
     justify-content: center;
     align-items: center;
   }
-
   .add:hover {
     cursor: pointer;
     border: 1px solid dimgray;
     border-radius: 5px;
     border-style: dashed;
   }
-
   .new {
     display: flex;
     flex-direction: column;
@@ -124,7 +117,6 @@ export default {
     padding: 5px 10px;
     border: 1px solid dimgray;
     border-radius: 5px;
-
     textarea {
       width: 100%;
       height: 100%;
@@ -132,11 +124,9 @@ export default {
       border: none;
       resize: none;
     }
-
     .decision {
       display: flex;
       justify-content: space-between;
-
       button {
         cursor: pointer;
         width: 100px;
@@ -144,7 +134,6 @@ export default {
     }
   }
 }
-
 @media (max-width: 1024px) {
   .list {
     margin: 0px;

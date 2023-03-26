@@ -12,7 +12,6 @@
   text-align: center;
   color: #2c3e50;
 }
-
 * {
   margin: 0;
   padding: 0;
@@ -20,5 +19,12 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: gray;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #333333;
 }
 </style>

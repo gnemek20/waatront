@@ -6,7 +6,7 @@
     </div>
     <div class="list">
       <div class="image" @click="clickImage(image)" v-for="(image, index) in images" v-bind:key="index">
-        <canvas :ref="image.name" />
+        <canvas :ref="image.name" width="150" height="150" />
       </div>
       <div class="add">
         <label for="input">
@@ -89,12 +89,10 @@ export default {
 .title {
   width: 800px;
   margin: 10px auto 20px;
-
   h1 {
     margin-bottom: 10px;
   }
 }
-
 .list {
   display: grid;
   justify-content: center;
@@ -102,13 +100,9 @@ export default {
   grid-template-columns: repeat(auto-fill, 150px);
   grid-auto-rows: 150px;
   gap: 20px;
-
   canvas {
-    width: 148px;
-    height: 148px;
     border-radius: 5px;
   }
-
   .image {
     border: 1px solid dimgray;
     border-radius: 5px;
@@ -116,17 +110,14 @@ export default {
     background-origin: border-box;
     background-clip: content-box, border-box;
   }
-
   .image:hover {
     cursor: pointer;
     box-shadow: 0px 0px 5px 0px dimgray;
   }
-
   .add {
     display: flex;
     justify-content: center;
     align-items: center;
-
     label {
       cursor: pointer;
       display: flex;
@@ -135,19 +126,16 @@ export default {
       width: 100%;
       height: 100%;
     }
-
     input {
       width: 0px;
     }
   }
-
   .add:hover {
     border: 1px solid dimgray;
     border-radius: 5px;
     border-style: dashed;
   }
 }
-
 @media (max-width: 1024px) {
   .list {
     margin: 0px 100px;
