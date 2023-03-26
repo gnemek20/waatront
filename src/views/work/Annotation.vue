@@ -45,10 +45,10 @@ export default {
     this.canvas.dragCanvas.addEventListener('mouseup', this.mouseUp);
   },
   methods: {
-    dragBox(context, x, y, dx, dy) {
-      context.setLineDash([10]);
-      context.clearRect(0, 0, this.canvas.dragCanvas.width, this.canvas.dragCanvas.height);
-      this.drawBox(context, x, y, dx, dy);
+    dragBox(x, y, dx, dy) {
+      this.context.dragContext.setLineDash([10]);
+      this.context.dragContext.clearRect(0, 0, this.canvas.dragCanvas.width, this.canvas.dragCanvas.height);
+      this.drawBox(this.context.dragContext, x, y, dx, dy);
     },
     drawBox(context, x, y, dx, dy) {
       context.beginPath();
@@ -73,7 +73,7 @@ export default {
       this.canvas.dragCanvas.addEventListener('mousemove', this.mouseMove);
     },
     mouseMove(event) {
-      this.dragBox(this.context.dragContext, this.boxes[this.boxesLength].x, this.boxes[this.boxesLength].y, event.offsetX, event.offsetY);
+      this.dragBox(this.boxes[this.boxesLength].x, this.boxes[this.boxesLength].y, event.offsetX, event.offsetY);
     },
     mouseUp(event) {
       this.canvas.dragCanvas.removeEventListener('mousemove', this.mouseMove);
