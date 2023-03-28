@@ -68,7 +68,7 @@
           </div>
           <div class="list lower" v-if="side.attribute">
             <div class="property">
-              <div class="category">
+              <div class="name">
                 <p>이름</p>
               </div>
               <div class="detail">
@@ -76,7 +76,7 @@
               </div>
             </div>
             <div class="property">
-              <div class="category">
+              <div class="name">
                 <p>색깔</p>
               </div>
               <div class="detail">
@@ -301,7 +301,7 @@ export default {
           height: 20px;
           border-bottom: 1px solid dimgray;
           font-size: 15px;
-          .category {
+          .name {
             display: flex;
             justify-content: center;
             align-items: center;
