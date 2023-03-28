@@ -6,30 +6,30 @@
     </div>
     <div class="board">
       <canvas ref="imageCanvas" width="798" height="798"></canvas>
-      <canvas :ref="`boxCanvas${index}`" v-for="(count, index) in boxCanvasCount" v-bind:key="index" width="798" height="798"></canvas>
+      <canvas :ref="`annotationCanvas${index}`" v-for="(count, index) in annotationCanvasCount" v-bind:key="index" width="798" height="798"></canvas>
       <canvas ref="dragCanvas" width="798" height="798"></canvas>
     </div>
     <div class="side">
       <div class="left">
         <div class="area" v-if="side.left">
           <div class="type">
-            <h3>클래스</h3>
+            <h3>카테고리</h3>
           </div>
           <div class="list">
-            <div class="item" v-for="(_class, index) in classes" v-bind:key="index">
-              <div class="form" :ref="`classForm${index}`" @click="clickClass(_class, index)">
+            <div class="item" v-for="(category, index) in categories" v-bind:key="index">
+              <div class="form" :ref="`categoryForm${index}`" @click="clickCategory(category, index)">
                 <div class="index">
                   <p>{{ index + 1 }}</p>
                 </div>
                 <div class="content">
-                  <input type="text" v-model="_class.content">
+                  <input type="text" v-model="category.content">
                 </div>
               </div>
-              <div class="remove" @click="removeClass(index)">
+              <div class="remove" @click="removeCategory(index)">
                 <img src="@/assets/icon/trash.svg" width="15">
               </div>
             </div>
-            <div class="add" @click="addClass">
+            <div class="add" @click="addCategory">
               <img src="@/assets/icon/add.svg" width="12">
             </div>
           </div>
@@ -45,20 +45,20 @@
           <img v-else src="@/assets/icon/leftArrow.svg" width="20">
         </div>
         <div class="area" v-if="side.right">
-          <div class="type box">
-            <h3>박스</h3>
+          <div class="type annotation">
+            <h3>어노테이션</h3>
           </div>
           <div class="list upper">
-            <div class="item" v-for="(box, index) in boxes" v-bind:key="index">
-              <div class="form" :ref="`boxForm${index}`" @click="clickBox(box, index)">
+            <div class="item" v-for="(annotation, index) in annotations" v-bind:key="index">
+              <div class="form" :ref="`annotationForm${index}`" @click="clickAnnotation(annotation, index)">
                 <div class="index">
                   <p>{{ index + 1 }}</p>
                 </div>
                 <div class="content">
-                  <p>{{ box.content }}</p>
+                  <p>{{ annotation.content }}</p>
                 </div>
               </div>
-              <div class="remove" @click="removeBox(index)">
+              <div class="remove" @click="removeAnnotation(index)">
                 <img src="@/assets/icon/trash.svg" width="15">
               </div>
             </div>
@@ -72,7 +72,7 @@
                 <p>이름</p>
               </div>
               <div class="detail">
-                <input type="text" v-model="selected.box.content">
+                <input type="text" v-model="selected.annotation.content">
               </div>
             </div>
             <div class="property">
@@ -80,7 +80,7 @@
                 <p>색깔</p>
               </div>
               <div class="detail">
-                <input type="text" v-model="selected.box.dummy">
+                <input type="text" v-model="selected.annotation.dummy">
               </div>
             </div>
           </div>
@@ -108,18 +108,18 @@ export default {
         attribute: false
       },
       selected: {
-        class: null,
-        box: null,
-        classRef: null,
-        boxRef: null
+        category: null,
+        annotation: null,
+        categoryRef: null,
+        annotationRef: null
       },
       mouse: {
         x: null,
         y: null
       },
-      boxes: [],
-      boxCanvasCount: 0,
-      classes: []
+      annotations: [],
+      annotationCanvasCount: 0,
+      categories: []
     }
   },
   mounted() {
@@ -139,12 +139,12 @@ export default {
     this.canvas.dragCanvas.addEventListener('mouseup', this.mouseUp);
   },
   methods: {
-    dragBox(x, y, dx, dy) {
+    dragAnnotation(x, y, dx, dy) {
       this.context.dragContext.setLineDash([10]);
       this.context.dragContext.clearRect(0, 0, this.canvas.dragCanvas.width, this.canvas.dragCanvas.height);
-      this.drawBox(this.context.dragContext, x, y, dx, dy);
+      this.drawAnnotation(this.context.dragContext, x, y, dx, dy);
     },
-    drawBox(context, x, y, dx, dy) {
+    drawAnnotation(context, x, y, dx, dy) {
       context.beginPath();
       context.moveTo(x, y);
       context.lineTo(dx, y);
@@ -153,73 +153,73 @@ export default {
       context.closePath();
       context.stroke();
     },
-    addClass() {
-      this.classes.push({
+    addCategory() {
+      this.categories.push({
         content: ''
       });
     },
-    removeClass(index) {
-      this.classes.splice(index, 1);
+    removeCategory(index) {
+      this.categories.splice(index, 1);
 
-      if (this.selected.class !== null) {
-        this.selected.classRef.style.backgroundColor = '#f0f0f0';
-        this.selected.classRef = null;
-        this.selected.class = null;
+      if (this.selected.category !== null) {
+        this.selected.categoryRef.style.backgroundColor = '#f0f0f0';
+        this.selected.categoryRef = null;
+        this.selected.category = null;
       }
     },
-    clickClass(_class, index) {
-      if (this.selected.classRef === this.$refs[`classForm${index}`][0]) {
-        this.selected.classRef.style.backgroundColor = '#f0f0f0';
-        this.selected.classRef = null;
-        this.selected.class = null;
+    clickCategory(category, index) {
+      if (this.selected.categoryRef === this.$refs[`categoryForm${index}`][0]) {
+        this.selected.categoryRef.style.backgroundColor = '#f0f0f0';
+        this.selected.categoryRef = null;
+        this.selected.category = null;
       }
       else {
         Object.keys(this.$refs).forEach((key) => {
-          if (key.includes('classForm') && this.$refs[key].length !== 0) {
+          if (key.includes('categoryForm') && this.$refs[key].length !== 0) {
             this.$refs[key][0].style.backgroundColor = '#f0f0f0'
           }
         });
 
-        this.selected.class = _class
-        this.selected.classRef = this.$refs[`classForm${index}`][0];
-        this.selected.classRef.style.backgroundColor = '#c9c9c9';
+        this.selected.category = category
+        this.selected.categoryRef = this.$refs[`categoryForm${index}`][0];
+        this.selected.categoryRef.style.backgroundColor = '#c9c9c9';
       }
     },
-    removeBox(index) {
-      this.$refs[`boxCanvas${this.boxes[index].canvasIndex}`][0].remove();
-      this.boxes.splice(index, 1);
+    removeAnnotation(index) {
+      this.$refs[`annotationCanvas${this.annotations[index].canvasIndex}`][0].remove();
+      this.annotations.splice(index, 1);
 
-      if (this.selected.box !== null) {
+      if (this.selected.annotation !== null) {
         this.side.attribute = false;
-        this.selected.boxRef.style.backgroundColor = '#f0f0f0';
-        this.selected.boxRef = null;
-        this.selected.box = null;
+        this.selected.annotationRef.style.backgroundColor = '#f0f0f0';
+        this.selected.annotationRef = null;
+        this.selected.annotation = null;
       }
     },
-    clickBox(box, index) {
-      if (this.selected.boxRef === this.$refs[`boxForm${index}`][0]) {
+    clickAnnotation(annotation, index) {
+      if (this.selected.annotationRef === this.$refs[`annotationForm${index}`][0]) {
         this.side.attribute = false;
-        this.selected.boxRef.style.backgroundColor = '#f0f0f0';
-        this.selected.boxRef = null;
-        this.selected.box = null;
+        this.selected.annotationRef.style.backgroundColor = '#f0f0f0';
+        this.selected.annotationRef = null;
+        this.selected.annotation = null;
       }
       else {
         Object.keys(this.$refs).forEach((key) => {
-          if (key.includes('boxForm') && this.$refs[key].length !== 0) {
+          if (key.includes('annotationForm') && this.$refs[key].length !== 0) {
             this.$refs[key][0].style.backgroundColor = '#f0f0f0'
           }
         });
 
-        this.selected.box = box;
-        this.selected.boxRef = this.$refs[`boxForm${index}`][0];
-        this.selected.boxRef.style.backgroundColor = '#c9c9c9';
+        this.selected.annotation = annotation;
+        this.selected.annotationRef = this.$refs[`annotationForm${index}`][0];
+        this.selected.annotationRef.style.backgroundColor = '#c9c9c9';
         this.side.attribute = true;
       }
     },
 
     /* Drag Event */
     mouseDown(event) {
-      this.boxCanvasCount++;
+      this.annotationCanvasCount++;
 
       this.mouse.x = event.offsetX;
       this.mouse.y = event.offsetY;
@@ -227,25 +227,25 @@ export default {
       this.canvas.dragCanvas.addEventListener('mousemove', this.mouseMove);
     },
     mouseMove(event) {
-      this.dragBox(this.mouse.x, this.mouse.y, event.offsetX, event.offsetY);
+      this.dragAnnotation(this.mouse.x, this.mouse.y, event.offsetX, event.offsetY);
     },
     mouseUp(event) {
       this.canvas.dragCanvas.removeEventListener('mousemove', this.mouseMove);
       this.context.dragContext.clearRect(0, 0, this.canvas.dragCanvas.width, this.canvas.dragCanvas.height);
 
-      this.boxes.push({
-        canvasIndex: this.boxCanvasCount - 1,
-        content: this.selected.class === null ? '' : this.selected.class.content,
+      this.annotations.push({
+        canvasIndex: this.annotationCanvasCount - 1,
+        content: this.selected.category === null ? '' : this.selected.category.content,
         x: Math.min(this.mouse.x, event.offsetX),
         y: Math.min(this.mouse.y, event.offsetY),
         dx: Math.max(this.mouse.x, event.offsetX),
         dy: Math.max(this.mouse.y, event.offsetY)
       });
 
-      const canvas = this.$refs[`boxCanvas${this.boxCanvasCount - 1}`][0];
+      const canvas = this.$refs[`annotationCanvas${this.annotationCanvasCount - 1}`][0];
       const context = canvas.getContext('2d');
 
-      this.drawBox(context, this.mouse.x, this.mouse.y, event.offsetX, event.offsetY);
+      this.drawAnnotation(context, this.mouse.x, this.mouse.y, event.offsetX, event.offsetY);
     }
   }
 }
