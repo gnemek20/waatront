@@ -123,14 +123,21 @@ export default {
     }
   },
   mounted() {
-    const query = this.$route.query.image;
     let id = '';
+    const query = this.$route.query.image;
     const images = this.$session.get('images');
     for (let image of images) {
       if (image.name === query) {
         id = image.id;
         break;
       }
+    }
+
+    const categories = this.$session.get('categories');
+    for (let category of categories) {
+      this.categories.push({
+        content: category.content
+      });
     }
 
     this.canvas.imageCanvas = this.$refs['imageCanvas'];
@@ -147,6 +154,9 @@ export default {
 
     this.canvas.dragCanvas.addEventListener('mousedown', this.mouseDown);
     this.canvas.dragCanvas.addEventListener('mouseup', this.mouseUp);
+  },
+  beforeDestroy() {
+    this.$session.set('categories', this.categories);
   },
   methods: {
     dragAnnotation(x, y, dx, dy) {
