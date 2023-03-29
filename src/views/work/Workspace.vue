@@ -5,7 +5,7 @@
       <hr>
     </div>
     <div class="list">
-      <div class="image" @click="clickImage(image)" v-for="(image, index) in images" v-bind:key="index">
+      <div class="image" @click="$push(`/annotation?image=${image.name}`)" v-for="(image, index) in images" v-bind:key="index">
         <canvas :ref="image.name" width="148" height="148" />
       </div>
       <div class="add">
@@ -37,6 +37,8 @@ export default {
           name: data.name
         });
       });
+
+      this.$session.set('images', this.images);
     }
   },
   updated() {
@@ -76,10 +78,6 @@ export default {
           input.value = null;
         }
       }
-    },
-    clickImage(image) {
-      this.$session.set('image', image.id);
-      this.$push('/annotation');
     }
   }
 }

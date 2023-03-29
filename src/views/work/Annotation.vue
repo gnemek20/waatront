@@ -123,11 +123,21 @@ export default {
     }
   },
   mounted() {
+    const query = this.$route.query.image;
+    let id = '';
+    const images = this.$session.get('images');
+    for (let image of images) {
+      if (image.name === query) {
+        id = image.id;
+        break;
+      }
+    }
+
     this.canvas.imageCanvas = this.$refs['imageCanvas'];
     this.context.imageContext = this.canvas.imageCanvas.getContext('2d');
 
     let getImage = new Image();
-    getImage.src = `https://drive.google.com/uc?export=view&id=${this.$session.get('image')}`;
+    getImage.src = `https://drive.google.com/uc?export=view&id=${id}`;
     getImage.onload = () => {
       this.context.imageContext.drawImage(getImage, 0, 0, this.canvas.imageCanvas.width, this.canvas.imageCanvas.height);
     }
