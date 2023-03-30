@@ -34,24 +34,28 @@ export default {
       data.forEach((data) => {
         this.images.push({
           id: data.id,
-          name: data.name
+          name: data.name,
+          width: 0,
+          height: 0
         });
       });
-
-      this.$session.set('images', this.images);
     }
   },
   updated() {
-    this.images.forEach((image) => {
-      const canvas = this.$refs[`${image.name}`][0];
+    for (let i = 0; i < this.images.length; i++) {
+      const canvas = this.$refs[`${this.images[i].name}`][0];
       const context = canvas.getContext('2d');
 
       let getImage = new Image();
-      getImage.src = `https://drive.google.com/uc?export=view&id=${image.id}`;
+      getImage.src = `https://drive.google.com/uc?export=view&id=${this.images[i].id}`;
       getImage.onload = () => {
         context.drawImage(getImage, 0, 0, canvas.width, canvas.height);
+        this.images[i].width = getImage.width;
+        this.images[i].height = getImage.height;
+        this.$session.set('images', this.images);
       }
-    });
+    }
+
   },
   methods: {
     async upload() {
@@ -71,11 +75,12 @@ export default {
           data.forEach((data) => {
             this.images.push({
               id: data.id,
-              name: data.name
+              name: data.name,
+              width: 0,
+              height: 0
             });
           });
 
-          this.$session.set('images', this.images);
           input.value = null;
         }
       }

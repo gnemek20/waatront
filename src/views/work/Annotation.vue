@@ -22,7 +22,7 @@
                   <p>{{ index + 1 }}</p>
                 </div>
                 <div class="content">
-                  <input type="text" v-model="category.content">
+                  <input type="text" v-model="category.name">
                 </div>
               </div>
               <div class="remove" @click="removeCategory(index)">
@@ -55,7 +55,7 @@
                   <p>{{ index + 1 }}</p>
                 </div>
                 <div class="content">
-                  <p>{{ annotation.content }}</p>
+                  <p>{{ annotation.name }}</p>
                 </div>
               </div>
               <div class="remove" @click="removeAnnotation(index)">
@@ -137,7 +137,7 @@ export default {
     const sessionCategories = this.$session.get('categories');
     sessionCategories?.forEach((category) => {
       this.categories.push({
-        content: category.content
+        name: category.name
       });
     })
 
@@ -181,7 +181,7 @@ export default {
 
     const annotationsArray = this.annotations.length ? [{ [this.$route.query.image]: this.annotations }] : [];
     const sessionAnnotations = this.$session.get('annotations');
-    sessionAnnotations.forEach((annotations) => {
+    sessionAnnotations?.forEach((annotations) => {
       if (Object.keys(annotations).filter((value) => { return value !== this.$route.query.image })?.length) {
         annotationsArray.push(annotations);
       }
@@ -208,7 +208,7 @@ export default {
     },
     addCategory() {
       this.categories.push({
-        content: ''
+        name: ''
       });
     },
     removeCategory(index) {
@@ -288,7 +288,7 @@ export default {
 
       this.annotations.push({
         canvasIndex: this.annotationCanvasCount - 1,
-        content: this.selected.category === null ? '' : this.selected.category.content,
+        name: this.selected.category === null ? '' : this.selected.category.name,
         x: Math.min(this.mouse.x, event.offsetX),
         y: Math.min(this.mouse.y, event.offsetY),
         dx: Math.max(this.mouse.x, event.offsetX),
