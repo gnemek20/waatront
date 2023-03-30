@@ -75,6 +75,7 @@ export default {
             });
           });
 
+          this.$session.set('images', this.images);
           input.value = null;
         }
       }

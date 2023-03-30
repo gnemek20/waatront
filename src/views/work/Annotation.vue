@@ -119,26 +119,35 @@ export default {
       },
       annotations: [],
       annotationCanvasCount: 0,
-      categories: []
+      categories: [],
+      updated: true
     }
   },
   mounted() {
     let id = '';
     const query = this.$route.query.image;
-    const images = this.$session.get('images');
-    for (let image of images) {
+    const sessionImages = this.$session.get('images');
+    for (let image of sessionImages) {
       if (image.name === query) {
         id = image.id;
         break;
       }
     }
 
-    const categories = this.$session.get('categories');
-    for (let category of categories) {
+    const sessionCategories = this.$session.get('categories');
+    sessionCategories?.forEach((category) => {
       this.categories.push({
         content: category.content
       });
-    }
+    })
+
+    const sessionAnnotations = this.$session.get('annotations');
+    sessionAnnotations?.forEach((annotations) => {
+      annotations[query]?.forEach((annotation) => {
+        this.annotationCanvasCount++;
+        this.annotations.push(annotation);
+      });
+    });
 
     this.canvas.imageCanvas = this.$refs['imageCanvas'];
     this.context.imageContext = this.canvas.imageCanvas.getContext('2d');
@@ -155,8 +164,32 @@ export default {
     this.canvas.dragCanvas.addEventListener('mousedown', this.mouseDown);
     this.canvas.dragCanvas.addEventListener('mouseup', this.mouseUp);
   },
-  beforeDestroy() {
+  updated() {
+    if (this.updated) {
+      this.updated = false;
+      for (let i = 0; i < this.annotations.length; i++) {
+        const canvas = this.$refs[`annotationCanvas${i}`][0];
+        const context = canvas.getContext('2d');
+        this.drawAnnotation(context, this.annotations[i].x, this.annotations[i].y, this.annotations[i].dx, this.annotations[i].dy);
+      }
+    }
+  },
+  beforeRouteLeave(from, to, next) {
+    for (let i = 0; i < this.annotations.length; i++) {
+      this.annotations[i].canvasIndex = i;
+    }
+
+    const annotationsArray = this.annotations.length ? [{ [this.$route.query.image]: this.annotations }] : [];
+    const sessionAnnotations = this.$session.get('annotations');
+    sessionAnnotations.forEach((annotations) => {
+      if (Object.keys(annotations).filter((value) => { return value !== this.$route.query.image })?.length) {
+        annotationsArray.push(annotations);
+      }
+    });
+
     this.$session.set('categories', this.categories);
+    this.$session.set('annotations', annotationsArray);
+    next();
   },
   methods: {
     dragAnnotation(x, y, dx, dy) {
