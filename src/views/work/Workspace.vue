@@ -58,7 +58,7 @@ export default {
 
   },
   methods: {
-    async upload() {
+    async uploadImage() {
       const input = document.getElementById('input');
       const files = input.files;
 
@@ -69,7 +69,7 @@ export default {
           formData.append('image', file);
         }
 
-        const { status, data } = await this.$post('/drive/upload', formData);
+        const { status, data } = await this.$post('/drive/uploadImage', formData);
   
         if (status === 200) {
           data.forEach((data) => {
