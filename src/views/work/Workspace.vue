@@ -12,7 +12,7 @@
         <label for="input">
           <img src="@/assets/icon/add.svg">
         </label>
-        <input id="input" type="file" @change="upload" accept="image/*" multiple>
+        <input id="input" type="file" @change="uploadImage" accept="image/*" multiple>
       </div>
     </div>
   </div>
