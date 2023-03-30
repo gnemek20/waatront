@@ -126,27 +126,27 @@ export default {
   mounted() {
     let id = '';
     const query = this.$route.query.image;
-    const sessionImages = this.$session.get('images');
-    for (let image of sessionImages) {
+    const images = this.$session.get('images');
+    for (let image of images) {
       if (image.name === query) {
         id = image.id;
         break;
       }
     }
 
-    const sessionCategories = this.$session.get('categories');
-    sessionCategories?.forEach((category) => {
+    const categories = this.$session.get('categories');
+    categories?.forEach((category) => {
       this.categories.push({
         name: category.name
       });
     })
 
-    const sessionAnnotations = this.$session.get('annotations');
-    sessionAnnotations?.forEach((annotations) => {
-      annotations[query]?.forEach((annotation) => {
+    const annotations = this.$session.get('annotations');
+    annotations?.forEach((annotation) => {
+      if (annotation.image === query) {
         this.annotationCanvasCount++;
         this.annotations.push(annotation);
-      });
+      }
     });
 
     this.canvas.imageCanvas = this.$refs['imageCanvas'];
@@ -179,16 +179,16 @@ export default {
       this.annotations[i].canvasIndex = i;
     }
 
-    const annotationsArray = this.annotations.length ? [{ [this.$route.query.image]: this.annotations }] : [];
-    const sessionAnnotations = this.$session.get('annotations');
-    sessionAnnotations?.forEach((annotations) => {
-      if (Object.keys(annotations).filter((value) => { return value !== this.$route.query.image })?.length) {
-        annotationsArray.push(annotations);
+    const annotations = [];
+    annotations.push(...this.annotations);
+    this.$session.get('annotations')?.forEach((annotation) => {
+      if (annotation.image !== this.$route.query.image) {
+        annotations.push(annotation);
       }
     });
 
     this.$session.set('categories', this.categories);
-    this.$session.set('annotations', annotationsArray);
+    this.$session.set('annotations', annotations);
     next();
   },
   methods: {
@@ -287,6 +287,7 @@ export default {
       this.context.dragContext.clearRect(0, 0, this.canvas.dragCanvas.width, this.canvas.dragCanvas.height);
 
       this.annotations.push({
+        image: this.$route.query.image,
         canvasIndex: this.annotationCanvasCount - 1,
         name: this.selected.category === null ? '' : this.selected.category.name,
         x: Math.min(this.mouse.x, event.offsetX),

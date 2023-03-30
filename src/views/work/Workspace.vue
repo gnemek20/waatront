@@ -55,7 +55,6 @@ export default {
         this.$session.set('images', this.images);
       }
     }
-
   },
   methods: {
     async uploadImage() {
@@ -83,6 +82,21 @@ export default {
 
           input.value = null;
         }
+      }
+    },
+    async uploadCoco() {
+      const images = this.$session.get('images');
+      const categories = this.$session.get('categories');
+      const annotations = this.$session.get('annotations');
+
+      const { status, data } = await this.$post('/drive/uploadCoco', {
+        images: images,
+        categories: categories,
+        annotations: annotations
+      });
+
+      if (status === 200) {
+        console.log(data)
       }
     }
   }
