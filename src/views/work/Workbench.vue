@@ -99,6 +99,10 @@ export default {
         }
         this.$session.set('annotations', annotations);
       }
+      else {
+        this.$session.remove('categories');
+        this.$session.remove('annotations');
+      }
 
       this.$push('/workspace');
     }

@@ -42,6 +42,8 @@ export default {
           height: 0
         });
       });
+
+      this.$session.set('images', this.images);
     }
   },
   updated() {
