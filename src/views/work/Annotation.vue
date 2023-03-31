@@ -72,7 +72,7 @@
                 <p>이름</p>
               </div>
               <div class="detail">
-                <input type="text" v-model="selected.annotation.content">
+                <input type="text" v-model="selected.annotation.name">
               </div>
             </div>
             <div class="property">
@@ -174,7 +174,7 @@ export default {
       }
     }
   },
-  beforeRouteLeave(from, to, next) {
+  beforeRouteLeave(to, from, next) {
     for (let i = 0; i < this.annotations.length; i++) {
       this.annotations[i].canvasIndex = i;
     }
