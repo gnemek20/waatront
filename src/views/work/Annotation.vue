@@ -189,6 +189,8 @@ export default {
 
     this.$session.set('categories', this.categories);
     this.$session.set('annotations', annotations);
+    this.updateCoco();
+    this.updateSave();
     next();
   },
   methods: {
@@ -268,6 +270,30 @@ export default {
         this.selected.annotationRef.style.backgroundColor = '#c9c9c9';
         this.side.attribute = true;
       }
+    },
+
+    /* Coco Event */
+    async updateCoco() {
+      const images = this.$session.get('images');
+      const categories = this.$session.get('categories');
+      const annotations = this.$session.get('annotations');
+
+      const { status, data } = await this.$post('/drive/updateCoco', {
+        workspace: this.$session.get('workspace'),
+        images: images,
+        categories: categories,
+        annotations: annotations
+      });
+    },
+    async updateSave() {
+      const categories = this.$session.get('categories');
+      const annotations = this.$session.get('annotations');
+
+      const { status, data } = await this.$post('/drive/updateSave', {
+        workspace: this.$session.get('workspace'),
+        categories: categories,
+        annotations: annotations
+      });
     },
 
     /* Drag Event */

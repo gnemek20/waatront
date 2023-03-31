@@ -29,37 +29,6 @@ export default {
     }
   },
   async beforeCreate() {
-    const save = await this.$post('/drive/getSave', {
-      workspace: this.$session.get('workspace')
-    });
-
-    const saveString = save.data;
-    const categoriesString = saveString.split('\n')[0].split('|');
-    const annotationsString = saveString.split('\n')[1].split('|');
-
-    const categories = [];
-    for (let i = 1; i < categoriesString.length; i++) {
-      categories.push({
-        name: categoriesString[i]
-      });
-    }
-    this.$session.set('categories', categories);
-
-    const annotations = [];
-    for (let i = 1; i < annotationsString.length; i++) {
-      const annotationString = annotationsString[i].split('@');
-      annotations.push({
-        image: annotationString[0],
-        canvasIndex: annotationString[1],
-        name: annotationString[2],
-        x: annotationString[3],
-        y: annotationString[4],
-        dx: annotationString[5],
-        dy: annotationString[6]
-      });
-    }
-    this.$session.set('annotations', annotations);
-
     const images = await this.$post('/drive/images', {
       workspace: this.$session.get('workspace')
     });
@@ -87,13 +56,12 @@ export default {
         this.images[i].width = getImage.width;
         this.images[i].height = getImage.height;
         this.$session.set('images', this.images);
+        this.updateCoco();
+        this.updateSave();
       }
     }
   },
   beforeRouteLeave(to, from, next) {
-    this.updateCoco();
-    this.updateSave();
-
     if (to.name !== 'annotation') {
       this.$session.remove('workspace');
       this.$session.remove('images');
@@ -131,6 +99,8 @@ export default {
         }
       }
     },
+
+    /* Coco Event */
     async getCoco() {
       const { status, data } = await this.$post('/drive/getCoco', {
         workspace: this.$session.get('workspace')
@@ -162,7 +132,7 @@ export default {
         annotations: annotations
       });
     }
-  }
+  },
 }
 </script>
 
