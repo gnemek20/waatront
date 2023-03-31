@@ -4,3 +4,11 @@
     <button @click="$push('/login')">시작하기</button>
   </div>
 </template>
+
+<script>
+export default {
+  beforeCreate() {
+    this.$session.destroy();
+  }
+}
+</script>
