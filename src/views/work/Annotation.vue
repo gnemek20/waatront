@@ -5,9 +5,9 @@
       <hr>
     </div>
     <div class="board">
-      <canvas ref="imageCanvas" width="798" height="798"></canvas>
-      <canvas :ref="`annotationCanvas${index}`" v-for="(count, index) in annotationCanvasCount" v-bind:key="index" width="798" height="798"></canvas>
-      <canvas ref="dragCanvas" width="798" height="798"></canvas>
+      <canvas v-show="image.ratio" ref="imageCanvas" :width="image.width" :height="image.height"></canvas>
+      <canvas v-show="image.ratio" :ref="`annotationCanvas${index}`" v-for="(count, index) in annotationCanvasCount" v-bind:key="index" :width="image.width" :height="image.height"></canvas>
+      <canvas v-show="image.ratio" ref="dragCanvas" :width="image.width" :height="image.height"></canvas>
     </div>
     <div class="side">
       <div class="left">
@@ -94,6 +94,15 @@
 export default {
   data() {
     return {
+      route: {
+        query: this.$route.query.image
+      },
+      image: {
+        id: '',
+        width: 0,
+        height: 0,
+        ratio: 0
+      },
       canvas: {
         imageCanvas: null,
         dragCanvas: null
@@ -120,20 +129,39 @@ export default {
       annotations: [],
       annotationCanvasCount: 0,
       categories: [],
-      updated: true
     }
   },
-  mounted() {
-    let id = '';
-    const query = this.$route.query.image;
+  created() {
     const images = this.$session.get('images');
     for (let image of images) {
-      if (image.name === query) {
-        id = image.id;
+      if (image.name === this.route.query) {
+        this.id = image.id;
         break;
       }
     }
 
+    const getImage = new Image();
+    getImage.src = `https://drive.google.com/uc?export=view&id=${this.id}`;
+    getImage.onload = () => {
+      let imageWidth = getImage.width;
+      let imageHeight = getImage.height;
+      let width = 0;
+      let height = 0;
+      for (let i = 10; i > 0; i--) {
+        width = imageWidth * (i / 10);
+        height = imageHeight * (i / 10);
+        if (width <= 1200 && height <= 800) {
+          this.image.width = width;
+          this.image.height = height;
+          this.image.ratio = i;
+          break;
+        }
+      }
+
+      this.drawImage();
+    }
+  },
+  mounted() {
     const categories = this.$session.get('categories');
     categories?.forEach((category) => {
       this.categories.push({
@@ -143,7 +171,7 @@ export default {
 
     const annotations = this.$session.get('annotations');
     annotations?.forEach((annotation) => {
-      if (annotation.image === query) {
+      if (annotation.image === this.route.query) {
         this.annotationCanvasCount++;
         this.annotations.push(annotation);
       }
@@ -152,27 +180,12 @@ export default {
     this.canvas.imageCanvas = this.$refs['imageCanvas'];
     this.context.imageContext = this.canvas.imageCanvas.getContext('2d');
 
-    let getImage = new Image();
-    getImage.src = `https://drive.google.com/uc?export=view&id=${id}`;
-    getImage.onload = () => {
-      this.context.imageContext.drawImage(getImage, 0, 0, this.canvas.imageCanvas.width, this.canvas.imageCanvas.height);
-    }
-
     this.canvas.dragCanvas = this.$refs['dragCanvas'];
     this.context.dragContext = this.canvas.dragCanvas.getContext('2d');
 
+    this.canvas.imageCanvas.addEventListener('resize', this.drawImage, { once: true });
     this.canvas.dragCanvas.addEventListener('mousedown', this.mouseDown);
     this.canvas.dragCanvas.addEventListener('mouseup', this.mouseUp);
-  },
-  updated() {
-    if (this.updated) {
-      this.updated = false;
-      for (let i = 0; i < this.annotations.length; i++) {
-        const canvas = this.$refs[`annotationCanvas${i}`][0];
-        const context = canvas.getContext('2d');
-        this.drawAnnotation(context, this.annotations[i].x, this.annotations[i].y, this.annotations[i].dx, this.annotations[i].dy);
-      }
-    }
   },
   beforeRouteLeave(to, from, next) {
     for (let i = 0; i < this.annotations.length; i++) {
@@ -194,6 +207,18 @@ export default {
     next();
   },
   methods: {
+    drawImage() {
+      let getImage = new Image();
+      getImage.src = `https://drive.google.com/uc?export=view&id=${this.id}`;
+      getImage.onload = () => {
+        this.context.imageContext.drawImage(getImage, 0, 0, this.image.width, this.image.height);
+        for (let i = 0; i < this.annotations.length; i++) {
+          const canvas = this.$refs[`annotationCanvas${i}`][0];
+          const context = canvas.getContext('2d');
+          this.drawAnnotation(context, this.annotations[i].x * (this.image.ratio / 10), this.annotations[i].y * (this.image.ratio / 10), this.annotations[i].dx * (this.image.ratio / 10), this.annotations[i].dy * (this.image.ratio / 10));
+        }
+      }
+    },
     dragAnnotation(x, y, dx, dy) {
       this.context.dragContext.setLineDash([10]);
       this.context.dragContext.clearRect(0, 0, this.canvas.dragCanvas.width, this.canvas.dragCanvas.height);
@@ -316,10 +341,10 @@ export default {
         image: this.$route.query.image,
         canvasIndex: this.annotationCanvasCount - 1,
         name: this.selected.category === null ? '' : this.selected.category.name,
-        x: Math.min(this.mouse.x, event.offsetX),
-        y: Math.min(this.mouse.y, event.offsetY),
-        dx: Math.max(this.mouse.x, event.offsetX),
-        dy: Math.max(this.mouse.y, event.offsetY)
+        x: Math.min(this.mouse.x, event.offsetX) * (10 / this.image.ratio),
+        y: Math.min(this.mouse.y, event.offsetY) * (10 / this.image.ratio),
+        dx: Math.max(this.mouse.x, event.offsetX) * (10 / this.image.ratio),
+        dy: Math.max(this.mouse.y, event.offsetY) * (10 / this.image.ratio)
       });
 
       const canvas = this.$refs[`annotationCanvas${this.annotationCanvasCount - 1}`][0];
