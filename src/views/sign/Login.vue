@@ -1,15 +1,17 @@
 <template>
   <div id="Login">
-    <h1>시작하기</h1>
-    <div class="id-form">
-      <p>아이디</p>
-      <input type="text" v-model="id">
+    <div class="title">
+      <h1>WAAT</h1>
+      <hr>
     </div>
-    <div class="pwd-form">
-      <p>비밀번호</p>
-      <input type="password" v-model="pwd">
+    <div class="form">
+      <div class="input" @keydown.enter="login">
+        <input type="text" v-model="id" placeholder="아이디">
+        <div class="divider" />
+        <input type="password" v-model="pwd" placeholder="비밀번호">
+      </div>
+      <button @click="login">로그인</button>
     </div>
-    <input type="button" value="로그인" @click="login">
   </div>
 </template>
 
@@ -37,9 +39,45 @@ export default {
       else {
         alert('에러가 발생했습니다. 잠시 후에 다시 시도해주세요.');
       }
-      
+
       this.$store.state.loading = false;
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.title {
+  width: 800px;
+  margin: 10px auto 20px;
+  h1 {
+    margin-bottom: 10px;
+  }
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  margin: 0px auto;
+  .input {
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    border: 1px solid dimgray;
+    margin-bottom: 10px;
+    input {
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+    }
+    .divider {
+      height: 1px;
+      background-color: dimgray;
+    }
+  }
+  button {
+    cursor: pointer;
+  }
+}
+</style>
