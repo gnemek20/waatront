@@ -147,7 +147,7 @@ export default {
       let imageHeight = getImage.height;
       let width = 0;
       let height = 0;
-      for (let i = 10; i > 0; i--) {
+      for (let i = 30; i > 0; i--) {
         width = imageWidth * (i / 10);
         height = imageHeight * (i / 10);
         if (width <= 1200 && height <= 800) {
