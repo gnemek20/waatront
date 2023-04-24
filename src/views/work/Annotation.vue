@@ -1,7 +1,17 @@
 <template>
   <div id="Annotation">
     <div class="title">
-      <h1>Annotation</h1>
+      <div class="area">
+        <div class="item" @click="$push('Workspace')">
+          <img src="@/assets/icon/return.svg" width="25">
+        </div>
+        <div class="item" @click="$reload()">
+          <h1>Annotation</h1>
+        </div>
+        <div class="item" @click="$push('Workbench')">
+          <img src="@/assets/icon/home.svg" width="25">
+        </div>
+      </div>
       <hr>
     </div>
     <div class="board">
@@ -360,8 +370,18 @@ export default {
 .title {
   width: 800px;
   margin: 10px auto 20px;
-  h1 {
+  .area {
+    display: grid;
+    justify-content: space-between;
+    grid-template-columns: repeat(3, auto);
+    padding: 0px 10px;
     margin-bottom: 10px;
+    .item {
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: end;
+    }
   }
 }
 .board {
