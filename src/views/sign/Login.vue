@@ -23,6 +23,8 @@ export default {
   },
   methods: {
     async login() {
+      this.$store.state.loading = true;
+
       const { status, data } = await this.$post('/drive/login', {
         id: this.id,
         pwd: this.pwd
@@ -35,6 +37,8 @@ export default {
       else {
         alert('에러가 발생했습니다. 잠시 후에 다시 시도해주세요.');
       }
+      
+      this.$store.state.loading = false;
     }
   }
 }

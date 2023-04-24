@@ -2,13 +2,13 @@
   <div id="Annotation">
     <div class="title">
       <div class="area">
-        <div class="item" @click="$push('Workspace')">
+        <div class="item" @click="$push('/workspace')">
           <img src="@/assets/icon/return.svg" width="25">
         </div>
         <div class="item" @click="$reload()">
           <h1>Annotation</h1>
         </div>
-        <div class="item" @click="$push('Workbench')">
+        <div class="item" @click="$push('/workbench')">
           <img src="@/assets/icon/home.svg" width="25">
         </div>
       </div>

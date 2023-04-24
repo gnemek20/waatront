@@ -2,10 +2,10 @@
   <div id="Workbench">
     <div class="title">
       <div class="area">
-        <div class="item" @click="$push('Login')">
+        <div class="item" @click="$push('/login')">
           <img src="@/assets/icon/return.svg" width="25">
         </div>
-        <div class="item">
+        <div class="item" @click="$reload()">
           <h1>Workbench</h1>
         </div>
       </div>
@@ -57,6 +57,8 @@ export default {
       this.add = bool;
     },
     async addWorkspace() {
+      this.$store.state.loading = true;
+
       const { status, data } = await this.$post('/drive/addWorkspace', {
         workbench: this.$session.get('workbench'),
         name: this.name
@@ -71,8 +73,12 @@ export default {
         this.name = '';
         this.changeAddStatus(false);
       }
+
+      this.$store.state.loading = false;
     },
     async clickWorkspace(workspace) {
+      this.$store.state.loading = true;
+
       this.$session.set('workspace', workspace.id);
       const save = await this.$post('/drive/getSave', {
         workspace: this.$session.get('workspace')
@@ -111,6 +117,7 @@ export default {
         this.$session.remove('annotations');
       }
 
+      this.$store.state.loading = false;
       this.$push('/workspace');
     }
   }

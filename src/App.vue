@@ -1,8 +1,19 @@
 <template>
   <div id="app">
-    <router-view/>
+    <Loading v-if="$store.state.loading" />
+    <router-view />
   </div>
 </template>
+
+<script>
+import Loading from '@/components/Loading.vue';
+
+export default {
+  components: {
+    Loading
+  }
+}
+</script>
 
 <style>
 #app {

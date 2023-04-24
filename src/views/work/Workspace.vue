@@ -2,13 +2,13 @@
   <div id="Workspace">
     <div class="title">
       <div class="area">
-        <div class="item" @click="$push('Workbench')">
+        <div class="item" @click="$push('/workbench')">
           <img src="@/assets/icon/return.svg" width="25">
         </div>
         <div class="item" @click="$reload()">
           <h1>Workspace</h1>
         </div>
-        <div class="item" @click="$push('Workbench')">
+        <div class="item" @click="$push('/workbench')">
           <img src="@/assets/icon/home.svg" width="25">
         </div>
       </div>
@@ -85,6 +85,8 @@ export default {
   },
   methods: {
     async uploadImage() {
+      this.$store.state.loading = true;
+
       const input = document.getElementById('input');
       const files = input.files;
 
@@ -110,6 +112,8 @@ export default {
           input.value = null;
         }
       }
+
+      this.$store.state.loading = false;
     },
 
     /* Coco Event */
