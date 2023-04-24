@@ -373,7 +373,7 @@ export default {
   .area {
     display: grid;
     justify-content: space-between;
-    grid-template-columns: repeat(3, auto);
+    grid-template-columns: 25px auto 25px;
     padding: 0px 10px;
     margin-bottom: 10px;
     .item {
