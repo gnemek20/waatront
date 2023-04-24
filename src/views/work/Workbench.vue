@@ -2,7 +2,7 @@
   <div id="Workbench">
     <div class="title">
       <div class="area">
-        <div class="item">
+        <div class="item" @click="$push('Login')">
           <img src="@/assets/icon/return.svg" width="25">
         </div>
         <div class="item">
