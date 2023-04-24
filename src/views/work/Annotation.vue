@@ -5,7 +5,7 @@
         <div class="item" @click="$push('/workspace')">
           <img src="@/assets/icon/return.svg" width="25">
         </div>
-        <div class="item" @click="$reload()">
+        <div class="item">
           <h1>Annotation</h1>
         </div>
         <div class="item" @click="$push('/workbench')">
