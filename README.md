@@ -1,6 +1,8 @@
 # waatront
 
 ## 프로젝트 실행 전 꼭 해주세요
+
+### package.json의 패키지들을 다운받는 명령어입니다.
 ```
 npm install
 ```
