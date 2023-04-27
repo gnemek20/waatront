@@ -1,13 +1,13 @@
 # waatront
 
-## Project setup
+## 프로젝트 실행 전 꼭 해주세요
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### 로컬에서 실행시키는 명령어입니다.
 ```
-npm run serve
+npm run dev
 ```
 
 ### Compiles and minifies for production
