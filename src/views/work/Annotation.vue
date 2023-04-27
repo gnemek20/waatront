@@ -43,6 +43,9 @@
               <img src="@/assets/icon/add.svg" width="12">
             </div>
           </div>
+          <div class="inference" @click="inference">
+            <h3>inference</h3>
+          </div>
         </div>
         <div class="arrow" @click="side.left = !side.left">
           <img v-if="side.left" src="@/assets/icon/leftArrow.svg" width="20">
@@ -145,13 +148,13 @@ export default {
     const images = this.$session.get('images');
     for (let image of images) {
       if (image.name === this.route.query) {
-        this.id = image.id;
+        this.image.id = image.id;
         break;
       }
     }
 
     const getImage = new Image();
-    getImage.src = `https://drive.google.com/uc?export=view&id=${this.id}`;
+    getImage.src = `https://drive.google.com/uc?export=view&id=${this.image.id}`;
     getImage.onload = () => {
       let imageWidth = getImage.width;
       let imageHeight = getImage.height;
@@ -219,11 +222,12 @@ export default {
   methods: {
     drawImage() {
       let getImage = new Image();
-      getImage.src = `https://drive.google.com/uc?export=view&id=${this.id}`;
+      getImage.src = `https://drive.google.com/uc?export=view&id=${this.image.id}`;
       getImage.onload = () => {
         this.context.imageContext.drawImage(getImage, 0, 0, this.image.width, this.image.height);
         for (let i = 0; i < this.annotations.length; i++) {
-          const canvas = this.$refs[`annotationCanvas${i}`][0];
+          const canvasNumber = this.annotationCanvasCount - this.annotations.length + i;
+          const canvas = this.$refs[`annotationCanvas${canvasNumber}`][0];
           const context = canvas.getContext('2d');
           this.drawAnnotation(context, this.annotations[i].x * (this.image.ratio / 10), this.annotations[i].y * (this.image.ratio / 10), this.annotations[i].dx * (this.image.ratio / 10), this.annotations[i].dy * (this.image.ratio / 10));
         }
@@ -304,6 +308,68 @@ export default {
         this.selected.annotationRef = this.$refs[`annotationForm${index}`][0];
         this.selected.annotationRef.style.backgroundColor = '#c9c9c9';
         this.side.attribute = true;
+      }
+    },
+
+    /* Inference Event */
+    async inference() {
+      this.$store.state.loading = true;
+      const { status, data } = await this.$post('/drive/inference', {
+        id: this.image.id,
+        pretrainedModel: 'YOLOv5'
+      });
+
+      if (status === 200) {
+        const categories = [];
+        const annotations = [];
+        for (let i = 1; true; i++) {
+          if (data.split('<object>')[i]?.length) {
+            const object = data.split('<object>')[i].split('</object>')[0];
+            const category = object.split('<name>')[1].split('</name>')[0];
+            const x = object.split('<xmin>')[1].split('</xmin>')[0];
+            const y = object.split('<ymin>')[1].split('</ymin>')[0];
+            const dx = object.split('<xmax>')[1].split('</xmax>')[0];
+            const dy = object.split('<ymax>')[1].split('</ymax>')[0];
+
+            if (!categories.includes(category)) {
+              categories.push(category);
+            }
+
+            annotations.push({
+              image: this.route.query,
+              canvasIndex: this.annotations.length + (i - 1),
+              name: category,
+              x: x,
+              y: y,
+              dx: dx,
+              dy: dy
+            });
+          }
+          else {
+            break;
+          }
+        }
+
+        const existCategories = [];
+        this.categories?.forEach((category) => {
+          existCategories.push(category.name);
+        });
+
+        categories?.forEach((category) => {
+          if (!existCategories.includes(category)) {
+            this.categories.push({
+              name: category
+            });
+          }
+        });
+
+        annotations?.forEach((annotation) => {
+          this.annotationCanvasCount++;
+          this.annotations.push(annotation);
+        });
+
+        this.drawImage();
+        this.$store.state.loading = false;
       }
     },
 
@@ -407,6 +473,14 @@ export default {
       height: 50vh;
       border-right: 1px solid dimgray;
       border-bottom: 1px solid dimgray;
+    }
+    .inference {
+      padding: 4px 0px;
+      border-top: 1px solid dimgray;
+    }
+    .inference:hover {
+      cursor: pointer;
+      background-color: #c9c9c9;
     }
   }
   .right {
