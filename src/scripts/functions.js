@@ -2,7 +2,8 @@ import axios from "axios";
 import router from "@/router/index.js";
 
 // const address = 'https://port-0-waatack-6g2llfkyykgm.sel3.cloudtype.app';
-const address = 'http://waat.kro.kr:3000';
+// const address = 'http://waat.kro.kr:3000';
+const address = 'http://localhost:3000';
 
 export default {
   install(Vue) {
